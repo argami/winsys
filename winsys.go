@@ -23,10 +23,12 @@ type libcall struct {
 	err  uintptr // error number
 }
 
+//go:noinline
 func noescape(p unsafe.Pointer) unsafe.Pointer {
 	x := uintptr(p)
 	return unsafe.Pointer(x ^ 0)
 }
+
 func Syscall(fn, nargs uintptr, args ...uintptr) (r1, r2, err uintptr) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()

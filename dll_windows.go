@@ -66,6 +66,7 @@ func (d *LazyDLL) Load() error {
 	return nil
 }
 
+//go:noinline
 func (d *LazyDLL) NewProc(name string) *LazyProc {
 	ret := &LazyProc{LazyProc: d.LazyDLL.NewProc(name), l: d, Name: name}
 	//fmt.Printf("NewProc LazyDLL2 %+v", ret)
