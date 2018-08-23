@@ -23,18 +23,24 @@ type libcall struct {
 	err  uintptr // error number
 }
 
+func noescape(p unsafe.Pointer) unsafe.Pointer {
+	x := uintptr(p)
+	return unsafe.Pointer(x ^ 0)
+}
 func Syscall(fn, nargs uintptr, args ...uintptr) (r1, r2, err uintptr) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 	c := &libcall{} //&getg().m.syscall
 	c.fn = fn
 	c.n = nargs
-	c.args = uintptr(unsafe.Pointer(&args[0]))
+	c.args = uintptr(noescape(unsafe.Pointer(&args[0])))
 	_cgo_runtime_cgocall(unsafe.Pointer(funcPC(asmstdcall)), uintptr(unsafe.Pointer(c)))
 	return c.r1, c.r2, c.err
 }
 
+//go:noescape
 func asmstdcall(fn unsafe.Pointer)
 
+//go:noescape
 //go:linkname _cgo_runtime_cgocall runtime.cgocall
 func _cgo_runtime_cgocall(unsafe.Pointer, uintptr) int32
