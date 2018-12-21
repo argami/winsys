@@ -73,8 +73,9 @@ func (d *LazyDLL) Load() error {
 
 // Release unloads DLL dll from memory.
 func (d *LazyDLL) Unload() (err error) {
-	d.dll.Release()
+	err := d.dll.Release()
 	d.dll = nil
+	return
 }
 
 //go:noinline
