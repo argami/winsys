@@ -5,8 +5,7 @@ package winsys
 import (
 	_ "runtime/cgo"
 	"sync"
-	"syscall"
-	"windows"	
+	"syscall"	
 )
 
 type DLL struct {
@@ -17,7 +16,7 @@ type DLL struct {
 
 // Release unloads DLL d from memory.
 func (d *DLL) Release() (err error) {
-	return FreeLibrary(d.Handle)
+	return syscall.FreeLibrary(d.Handle)
 }
 
 func (d *DLL) FindProc(name string) (*Proc, error) {
