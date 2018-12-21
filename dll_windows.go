@@ -14,6 +14,11 @@ type DLL struct {
 	Handle syscall.Handle
 }
 
+// Release unloads DLL d from memory.
+func (d *DLL) Release() (err error) {
+	return FreeLibrary(d.Handle)
+}
+
 func (d *DLL) FindProc(name string) (*Proc, error) {
 	//fmt.Printf("FindProc: %+v %s \n", d, name)
 
@@ -64,6 +69,12 @@ func (d *LazyDLL) Load() error {
 		}
 	}
 	return nil
+}
+
+// Release unloads DLL dll from memory.
+func (d *LazyDLL) Unload() (err error) {
+	d.dll.Release()
+	d.dll = nil
 }
 
 //go:noinline
