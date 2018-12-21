@@ -6,6 +6,7 @@ import (
 	_ "runtime/cgo"
 	"sync"
 	"syscall"
+	"windows"	
 )
 
 type DLL struct {
