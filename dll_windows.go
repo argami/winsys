@@ -5,7 +5,7 @@ package winsys
 import (
 	_ "runtime/cgo"
 	"sync"
-	"syscall"	
+	"syscall"
 )
 
 type DLL struct {
@@ -57,24 +57,24 @@ func (d *LazyDLL) Load() error {
 		defer d.mu.Unlock()
 		//fmt.Printf("Load: %+v\n", d)
 
-		if d.dll == nil {
-			dll, e := syscall.LoadDLL(d.Name)
-			//fmt.Printf("Load: %+v %+v \n", dll, e)
-			if e != nil {
-				return e
-			}
-			// Non-racy version of:
-			d.dll = &DLL{Name: dll.Name, Handle: dll.Handle, DLL: dll}
-			// atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&d.dll)), unsafe.Pointer(dll))
+		dll, e := syscall.LoadDLL(d.Name)
+		//fmt.Printf("Load: %+v %+v \n", dll, e)
+		if e != nil {
+			return e
 		}
+		// Non-racy version of:
+		d.dll = &DLL{Name: dll.Name, Handle: dll.Handle, DLL: dll}
+		// atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&d.dll)), unsafe.Pointer(dll))
 	}
 	return nil
 }
 
 // Release unloads DLL dll from memory.
 func (d *LazyDLL) Unload() (err error) {
-	err = d.dll.Release()
-	d.dll = nil
+	if d.dll != nil {
+		err = d.dll.Release()
+		d.dll = nil
+	}
 	return
 }
 
